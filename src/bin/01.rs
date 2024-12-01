@@ -1,6 +1,6 @@
 advent_of_code::solution!(1);
 
-fn input_to_pair_vec(input: &str) -> Vec<Vec<u32>> {
+fn input_to_sorted_pair_vec(input: &str) -> Vec<Vec<u32>> {
     let mut left_vec = Vec::new();
     let mut right_vec = Vec::new();
 
@@ -18,15 +18,17 @@ fn input_to_pair_vec(input: &str) -> Vec<Vec<u32>> {
         right_vec.push(right.to_owned());
     }
 
-    vec![left_vec, right_vec]
-}
-
-pub fn part_one(input: &str) -> Option<i32> {
-    let mut pair_vec = input_to_pair_vec(input);
+    let mut pair_vec = vec![left_vec, right_vec];
 
     for vec in pair_vec.iter_mut() {
         vec.sort()
     }
+
+    return pair_vec;
+}
+
+pub fn part_one(input: &str) -> Option<i32> {
+    let pair_vec = input_to_sorted_pair_vec(input);
 
     let [left_vec, right_vec] = pair_vec.as_slice() else {
         panic!("Can't unpack values.")
