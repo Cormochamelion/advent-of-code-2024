@@ -1,5 +1,7 @@
 advent_of_code::solution!(1);
 
+use std::collections::HashMap;
+
 fn input_to_sorted_pair_vec(input: &str) -> Vec<Vec<u32>> {
     let mut left_vec = Vec::new();
     let mut right_vec = Vec::new();
@@ -46,7 +48,35 @@ pub fn part_one(input: &str) -> Option<i32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let pair_vec = input_to_sorted_pair_vec(input);
+
+    let [left_vec, right_vec] = pair_vec.as_slice() else {
+        panic!("Can't unpack values.")
+    };
+
+    let mut value_counts = HashMap::new();
+
+    for group in right_vec
+        .as_slice()
+        .chunk_by(|first, second| first == second)
+    {
+        let value = group[0];
+        value_counts.insert(value.to_owned(), group.len());
+    }
+
+    let mut sim_score: u32 = 0;
+
+    for left_val in left_vec {
+        // let value_count: u32 = ;
+        let value_count: u32 = match value_counts.get::<u32>(left_val) {
+            Some(&value) => value as u32,
+            _ => 0,
+        };
+
+        sim_score += left_val * value_count;
+    }
+
+    Some(sim_score)
 }
 
 #[cfg(test)]
