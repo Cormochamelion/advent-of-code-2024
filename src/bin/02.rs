@@ -10,29 +10,22 @@ where
 fn is_safe(report: &str) -> bool {
     let mut report_iter = report
         .split_whitespace()
-        .map(|value| value.parse::<u32>().expect("Couldn't parse string to int."));
+        .map(|value| value.parse::<u32>().expect("Couldn't parse string to int."))
+        .peekable();
 
     let mut previous = report_iter
         .next()
         .expect("Report does not contain enough levels.");
 
-    let current = report_iter
-        .next()
-        .expect("Report does not contain enough levels.");
+    let current_ref = report_iter.peek().unwrap();
 
-    let compare_fun: fn(u32, u32) -> bool = if previous > current {
+    let compare_fun: fn(u32, u32) -> bool = if previous > *current_ref {
         |a, b| a > b
-    } else if previous < current {
+    } else if previous < *current_ref {
         |a, b| a < b
     } else {
         |_, _| false
     };
-
-    if !compare_levels(previous, current, compare_fun) {
-        return false;
-    }
-
-    previous = current;
 
     for current in report_iter {
         if !compare_levels(previous, current, compare_fun) {
