@@ -50,8 +50,64 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(n_safe)
 }
 
+fn vec_without(vec: &Vec<u32>, i: usize) -> Vec<u32> {
+    let mut new_vec = vec.clone();
+    _ = new_vec.remove(i);
+    return new_vec;
+}
+
+fn is_safe_dampened(mut report_vec: Vec<u32>, tol: u32) -> bool {
+    let mut previous = report_vec[0];
+    let next = report_vec[1];
+
+    let compare_fun: fn(u32, u32) -> bool = if previous > next {
+        |a, b| a > b
+    } else if previous < next {
+        |a, b| a < b
+    } else {
+        |_, _| false
+    };
+
+    let mut report_enum_iter = report_vec.iter().enumerate();
+
+    // We already took `previous`, loop needs to start later.
+    _ = report_enum_iter.next();
+
+    for (i, &current) in report_enum_iter {
+        if !compare_levels(previous, current, compare_fun) {
+            if tol < 1 {
+                return false;
+            }
+
+            let new_tol = tol - 1;
+
+            let safe_without_current = is_safe_dampened(vec_without(&report_vec, i), new_tol);
+            let safe_without_previous = is_safe_dampened(vec_without(&report_vec, i - 1), new_tol);
+            let safe_without_first = is_safe_dampened(vec_without(&report_vec, 0), new_tol);
+
+            return safe_without_current | safe_without_previous | safe_without_first;
+        }
+
+        previous = current;
+    }
+
+    return true;
+}
+
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut n_safe: u32 = 0;
+
+    for report_string in input.lines() {
+        let report_vec = report_string
+            .split_whitespace()
+            .map(|value| value.parse::<u32>().expect("Couldn't parse string to int."))
+            .collect::<Vec<u32>>();
+        if is_safe_dampened(report_vec, 1) {
+            n_safe += 1
+        };
+    }
+
+    Some(n_safe)
 }
 
 #[cfg(test)]
