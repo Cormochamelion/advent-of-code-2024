@@ -2,18 +2,18 @@ advent_of_code::solution!(3);
 
 use regex::Regex;
 
-pub fn part_one(input: &str) -> Option<i32> {
+pub fn part_one(input: &str) -> Option<u32> {
     let mult_re: Regex = Regex::new("mul\\(([0-9]+),([0-9]+)\\)").unwrap();
 
     let match_groups = mult_re
         .captures_iter(input)
         .map(|captures| captures.extract());
 
-    let mut total_operations_sum: i32 = 0;
+    let mut total_operations_sum: u32 = 0;
 
     for (_, [arg1_str, arg2_str]) in match_groups {
-        let arg1 = arg1_str.parse::<i32>().unwrap();
-        let arg2 = arg2_str.parse::<i32>().unwrap();
+        let arg1 = arg1_str.parse::<u32>().unwrap();
+        let arg2 = arg2_str.parse::<u32>().unwrap();
 
         total_operations_sum += arg1 * arg2;
     }
