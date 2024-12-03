@@ -2,7 +2,7 @@ advent_of_code::solution!(3);
 
 use regex::Regex;
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn sum_of_mults(input: &str) -> u32 {
     let mult_re: Regex = Regex::new("mul\\(([0-9]+),([0-9]+)\\)").unwrap();
 
     let match_groups = mult_re
@@ -18,7 +18,11 @@ pub fn part_one(input: &str) -> Option<u32> {
         total_operations_sum += arg1 * arg2;
     }
 
-    Some(total_operations_sum)
+    return total_operations_sum;
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    Some(sum_of_mults(input))
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
