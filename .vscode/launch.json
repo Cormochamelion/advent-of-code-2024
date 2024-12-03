@@ -12,8 +12,7 @@
                 "args": [
                     "test",
                     "--no-run",
-                    // replace `01` here with the solution you like to debug.
-                    "--bin=01",
+                    "--bin=${fileBasenameNoExtension}",
                     "--package=advent_of_code"
                 ],
             },
@@ -27,8 +26,7 @@
             "cargo": {
                 "args": [
                     "build",
-                    // replace `01` here with the solution you like to debug.
-                    "--bin=01",
+                    "--bin=${fileBasenameNoExtension}",
                     "--package=advent_of_code"
                 ],
             },
