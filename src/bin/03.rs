@@ -26,7 +26,11 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let cond_re: Regex = Regex::new("(?ms)don't\\(\\).+?do\\(\\)").unwrap();
+
+    let cleaned_input = cond_re.replace_all(&input, "");
+
+    Some(sum_of_mults(&cleaned_input))
 }
 
 #[cfg(test)]
