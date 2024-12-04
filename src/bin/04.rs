@@ -18,15 +18,20 @@ impl Direction {
     }
 }
 
-static DIRECTIONS: [Direction; 8] = [
-    Direction { offsets: (-1, -1) },
-    Direction { offsets: (0, -1) },
-    Direction { offsets: (1, -1) },
-    Direction { offsets: (-1, 0) },
-    Direction { offsets: (1, 0) },
-    Direction { offsets: (-1, 1) },
-    Direction { offsets: (0, 1) },
-    Direction { offsets: (1, 1) },
+static BOTTOM_LEFT: Direction = Direction { offsets: (-1, -1) };
+static BOTTOM_RIGHT: Direction = Direction { offsets: (-1, 1) };
+static TOP_LEFT: Direction = Direction { offsets: (1, -1) };
+static TOP_RIGHT: Direction = Direction { offsets: (1, 1) };
+
+static DIRECTIONS: [&Direction; 8] = [
+    &BOTTOM_LEFT,
+    &Direction { offsets: (0, -1) },
+    &TOP_LEFT,
+    &Direction { offsets: (-1, 0) },
+    &Direction { offsets: (1, 0) },
+    &BOTTOM_RIGHT,
+    &Direction { offsets: (0, 1) },
+    &TOP_RIGHT,
 ];
 
 fn input_to_matrix(input: &str) -> DMatrix<char> {
@@ -154,8 +159,52 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(n_words)
 }
 
+fn string_from_index_slice(matrix: &DMatrix<char>, index_slice: &[(usize, usize)]) -> String {
+    return index_slice
+        .iter()
+        .map(|slice| matrix[*slice])
+        .collect::<String>();
+}
+
+fn is_xmas_a(char_mat: &DMatrix<char>, pos: (usize, usize)) -> bool {
+    if !(char_mat[pos] == 'A') {
+        return false;
+    }
+
+    let diag_1 = [
+        pos_to_indices(TOP_LEFT.move_from(pos)),
+        pos,
+        pos_to_indices(BOTTOM_RIGHT.move_from(pos)),
+    ];
+
+    let diag_2 = [
+        pos_to_indices(TOP_RIGHT.move_from(pos)),
+        pos,
+        pos_to_indices(BOTTOM_LEFT.move_from(pos)),
+    ];
+
+    let all_diags_are_mas = [diag_1, diag_2]
+        .into_iter()
+        .map(|diag| string_from_index_slice(char_mat, &diag))
+        .all(|diag_str| diag_str == "SAM" || diag_str == "MAS");
+
+    return all_diags_are_mas;
+}
+
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let input_mat = input_to_matrix(input);
+
+    let mut n_xmas = 0;
+
+    for i in 1..(input_mat.nrows() - 1) {
+        for j in 1..(input_mat.ncols() - 1) {
+            if is_xmas_a(&input_mat, (i, j)) {
+                n_xmas += 1;
+            }
+        }
+    }
+
+    Some(n_xmas)
 }
 
 #[cfg(test)]
