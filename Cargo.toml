@@ -28,4 +28,5 @@ pico-args = "0.5.0"
 tinyjson = "2.5.1"
 
 # Solution dependencies
+nalgebra = "0.33.2"
 regex = "1.11.1"
