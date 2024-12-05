@@ -90,8 +90,42 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(print_sum)
 }
 
+fn make_conforming<'a>(
+    job: &Vec<&'a str>,
+    rule_map: &HashMap<String, HashSet<String>>,
+) -> Vec<&'a str> {
+    let job_set: HashSet<String> = job
+        .iter()
+        .map(|page| String::from(*page))
+        .collect::<HashSet<String>>();
+
+    let mut rule_set: &HashSet<String>;
+    let mut order_vec: Vec<(&str, u32)> = Vec::new();
+
+    for page in job.iter() {
+        rule_set = rule_map.get(*page).unwrap();
+
+        order_vec.push((*page, rule_set.intersection(&job_set).count() as u32));
+    }
+
+    order_vec.sort_by(|a, b| a.1.cmp(&b.1));
+
+    return order_vec.iter().map(|x| x.0).collect();
+}
+
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (rules, print_queue) = parse_input(input);
+
+    let mut print_sum: u32 = 0;
+
+    for job in print_queue {
+        if !job_conforms(&job, &rules) {
+            let conforming_job = make_conforming(&job, &rules);
+            print_sum += get_middle_job_value(&conforming_job);
+        }
+    }
+
+    Some(print_sum)
 }
 
 #[cfg(test)]
