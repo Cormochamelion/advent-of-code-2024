@@ -54,6 +54,7 @@ fn get_middle_job_value(job: &Vec<&str>) -> u32 {
 
 fn job_conforms(job: &Vec<&str>, rule_map: &HashMap<String, HashSet<String>>) -> bool {
     let mut front_set: HashSet<String> = HashSet::new();
+    let mut maybe_rule_set: Option<&HashSet<String>>;
     let mut rule_set: &HashSet<String>;
 
     for (i, page) in job.iter().enumerate().rev() {
@@ -65,7 +66,14 @@ fn job_conforms(job: &Vec<&str>, rule_map: &HashMap<String, HashSet<String>>) ->
                 .collect::<HashSet<String>>(),
         );
 
-        rule_set = rule_map.get(*page).unwrap();
+        maybe_rule_set = rule_map.get(*page);
+
+        if maybe_rule_set == Option::None {
+            // Current page has no rules putting it in front of others.
+            continue;
+        }
+
+        rule_set = maybe_rule_set.unwrap();
 
         match front_set.intersection(rule_set).next() {
             Some(_) => return false,
@@ -99,11 +107,19 @@ fn make_conforming<'a>(
         .map(|page| String::from(*page))
         .collect::<HashSet<String>>();
 
+    let mut maybe_rule_set: Option<&HashSet<String>>;
     let mut rule_set: &HashSet<String>;
     let mut order_vec: Vec<(&str, u32)> = Vec::new();
 
     for page in job.iter() {
-        rule_set = rule_map.get(*page).unwrap();
+        maybe_rule_set = rule_map.get(*page);
+
+        if maybe_rule_set == Option::None {
+            // Current page has no rules putting it in front of others.
+            continue;
+        }
+
+        rule_set = maybe_rule_set.unwrap();
 
         order_vec.push((*page, rule_set.intersection(&job_set).count() as u32));
     }
