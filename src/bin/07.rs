@@ -28,11 +28,11 @@ fn parse_input(input: &str) -> Vec<(u64, Vec<u64>)> {
     return output;
 }
 
-fn calibration_correct(calibration: &(u64, Vec<u64>)) -> bool {
+fn calibration_correct(calibration: &(u64, Vec<u64>), operators: &[fn(u64, u64) -> u64]) -> bool {
     let (cal_result, cal_values) = calibration;
     let n_operators = cal_values.len() - 1;
 
-    for operator_seq in repeat_n(OPERATORS.iter(), n_operators).multi_cartesian_product() {
+    for operator_seq in repeat_n(operators.iter(), n_operators).multi_cartesian_product() {
         let mut values_iter = cal_values.iter();
         let first_value = values_iter.next().unwrap();
 
@@ -54,7 +54,7 @@ pub fn part_one(input: &str) -> Option<u64> {
     let mut sum_tot_cals = 0;
 
     for calibration in calibrations {
-        if calibration_correct(&calibration) {
+        if calibration_correct(&calibration, &OPERATORS) {
             sum_tot_cals += calibration.0;
         }
     }
