@@ -10,6 +10,12 @@ fn mul(a: u64, b: u64) -> u64 {
     a.checked_mul(b).unwrap()
 }
 
+fn concat(a: u64, b: u64) -> u64 {
+    let b_magnitude = b.ilog10();
+    let b_pow = 10u64.checked_pow(b_magnitude + 1).unwrap();
+    a.checked_mul(b_pow).unwrap().checked_add(b).unwrap()
+}
+
 const OPERATORS: [fn(u64, u64) -> u64; 2] = [add, mul];
 
 fn parse_input(input: &str) -> Vec<(u64, Vec<u64>)> {
@@ -62,8 +68,19 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(sum_tot_cals)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u64> {
+    let calibrations = parse_input(input);
+
+    let mut sum_tot_cals = 0;
+    let operators = [OPERATORS[0], OPERATORS[1], concat];
+
+    for calibration in calibrations {
+        if calibration_correct(&calibration, &operators) {
+            sum_tot_cals += calibration.0;
+        }
+    }
+
+    Some(sum_tot_cals)
 }
 
 #[cfg(test)]
