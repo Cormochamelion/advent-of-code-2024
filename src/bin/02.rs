@@ -56,7 +56,7 @@ fn vec_without(vec: &Vec<u32>, i: usize) -> Vec<u32> {
     return new_vec;
 }
 
-fn is_safe_dampened(mut report_vec: Vec<u32>, tol: u32) -> bool {
+fn is_safe_dampened(report_vec: Vec<u32>, tol: u32) -> bool {
     let mut previous = report_vec[0];
     let next = report_vec[1];
 
