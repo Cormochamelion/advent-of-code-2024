@@ -81,8 +81,79 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(antinodes.iter().count() as u32)
 }
 
+fn extend_pos_line(pos: &[usize; 2], diff: &[i32; 2], bounds: &[usize; 2]) -> Option<[usize; 2]> {
+    let new_pos = [
+        ((pos[0] as i32).overflowing_add(diff[0]).0) as usize,
+        ((pos[1] as i32).overflowing_add(diff[1]).0) as usize,
+    ];
+
+    if (new_pos[0] < bounds[0]) && (new_pos[1] < bounds[1]) {
+        return Some(new_pos);
+    } else {
+        return None;
+    }
+}
+
+fn resonant_pos_pair_antinodes(
+    pos_pair: (&[usize; 2], &[usize; 2]),
+    dims: &[usize; 2],
+) -> Vec<[usize; 2]> {
+    let mut antinode_vec: Vec<[usize; 2]> = vec![pos_pair.0.clone(), pos_pair.1.clone()];
+
+    let diff: Vec<i32> = pos_pair
+        .0
+        .iter()
+        .zip(pos_pair.1)
+        .map(|(a, b)| *a as i32 - *b as i32)
+        .collect();
+
+    let mut pos = *pos_pair.0;
+    let mut diff_arr = [diff[0], diff[1]];
+
+    loop {
+        match extend_pos_line(&pos, &diff_arr, dims) {
+            Some(new_pos) => {
+                pos = new_pos;
+                antinode_vec.push(pos);
+            }
+            None => break,
+        }
+    }
+
+    pos = *pos_pair.1;
+    diff_arr = [
+        diff[0].checked_neg().unwrap(),
+        diff[1].checked_neg().unwrap(),
+    ];
+
+    loop {
+        match extend_pos_line(&pos, &diff_arr, dims) {
+            Some(new_pos) => {
+                pos = new_pos;
+                antinode_vec.push(pos);
+            }
+            None => break,
+        }
+    }
+
+    return antinode_vec;
+}
+
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (dims, freq_positions) = parse_input(input);
+
+    let mut antinodes: HashSet<[usize; 2]> = HashSet::new();
+
+    for (_, freq_vec) in freq_positions.iter() {
+        for pos_pair in freq_vec.iter().combinations(2) {
+            let pos_tuple = (pos_pair[0], pos_pair[1]);
+            for antinode in resonant_pos_pair_antinodes(pos_tuple, &dims) {
+                antinodes.insert(antinode);
+            }
+        }
+    }
+
+    Some(antinodes.iter().count() as u32)
 }
 
 #[cfg(test)]
