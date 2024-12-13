@@ -3,11 +3,11 @@ advent_of_code::solution!(13);
 use nalgebra::{DMatrix, DVector};
 use regex::Regex;
 
-type Button = ([u32; 2], u32);
-type PrizePos = [u32; 2];
+type Button = ([u64; 2], u64);
+type PrizePos = [u64; 2];
 type ClawMachine = ([Button; 2], PrizePos);
 
-fn prize_for_button_type(button_type: &str) -> u32 {
+fn prize_for_button_type(button_type: &str) -> u64 {
     match button_type {
         "A" => 3,
         "B" => 1,
@@ -25,7 +25,7 @@ fn parse_input(input: &str) -> Vec<ClawMachine> {
 
     let mut buttons: Vec<Button> = Vec::new();
     let mut prize_pos: PrizePos;
-    let mut button_pos: [u32; 2];
+    let mut button_pos: [u64; 2];
 
     for line in input.lines() {
         if let Some((_, [button_type, x, y])) = button_re.captures(line).map(|caps| caps.extract())
@@ -47,7 +47,7 @@ fn parse_input(input: &str) -> Vec<ClawMachine> {
     output
 }
 
-fn find_cheapest_inputs(machine: ClawMachine) -> u32 {
+fn find_cheapest_inputs(machine: ClawMachine) -> u64 {
     let precision = 10;
     let (buttons, prize_pos) = machine;
     let button_dirs: [[f64; 2]; 2] = buttons
@@ -57,10 +57,10 @@ fn find_cheapest_inputs(machine: ClawMachine) -> u32 {
         .try_into()
         .unwrap();
 
-    let button_costs: [&u32; 2] = buttons
+    let button_costs: [&u64; 2] = buttons
         .iter()
         .map(|(_, cost)| cost)
-        .collect::<Vec<&u32>>()
+        .collect::<Vec<&u64>>()
         .try_into()
         .unwrap();
 
@@ -87,7 +87,7 @@ fn find_cheapest_inputs(machine: ClawMachine) -> u32 {
         let total_cost = sol_slice
             .iter()
             .zip(button_costs)
-            .map(|(count, cost)| (count.round() as u32) * cost)
+            .map(|(count, cost)| (count.round() as u64) * cost)
             .sum();
         total_cost
     } else {
@@ -95,9 +95,9 @@ fn find_cheapest_inputs(machine: ClawMachine) -> u32 {
     }
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(input: &str) -> Option<u64> {
     let machines = parse_input(input);
-    let mut least_tokens: u32 = 0;
+    let mut least_tokens: u64 = 0;
 
     for machine in machines {
         least_tokens += find_cheapest_inputs(machine);
@@ -105,7 +105,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(least_tokens)
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
+pub fn part_two(_input: &str) -> Option<u64> {
     None
 }
 
