@@ -24,7 +24,7 @@ fn count_peaks_from_trailhead(
     visited_peaks: &mut HashSet<(usize, usize)>,
 ) -> u32 {
     let mut trail_head_score = 0;
-    let dims = vec![map.len(), map[0].len()];
+    let dims = [map.len(), map[0].len()];
     let mut new_pos: Vec<usize>;
     let mut new_height: u32;
 
@@ -41,7 +41,7 @@ fn count_peaks_from_trailhead(
         }
     }
 
-    for dir in DIRECTIONS.iter().map(|dir| Vec::from(dir)) {
+    for dir in DIRECTIONS.iter().map(Vec::from) {
         new_pos = trail_head_pos
             .iter()
             .zip(dir)
@@ -54,7 +54,7 @@ fn count_peaks_from_trailhead(
 
         new_height = map[new_pos[0]][new_pos[1]];
 
-        if new_height.checked_sub(curr_height).unwrap_or(0) != 1 {
+        if new_height.saturating_sub(curr_height) != 1 {
             continue;
         }
 
@@ -86,7 +86,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 fn count_trails_from_trailhead(map: &Vec<Vec<u32>>, trail_head_pos: Vec<usize>) -> u32 {
     let mut trail_head_score = 0;
-    let dims = vec![map.len(), map[0].len()];
+    let dims = [map.len(), map[0].len()];
     let mut new_pos: Vec<usize>;
     let mut new_height: u32;
 
@@ -96,7 +96,7 @@ fn count_trails_from_trailhead(map: &Vec<Vec<u32>>, trail_head_pos: Vec<usize>) 
         return 1;
     }
 
-    for dir in DIRECTIONS.iter().map(|dir| Vec::from(dir)) {
+    for dir in DIRECTIONS.iter().map(Vec::from) {
         new_pos = trail_head_pos
             .iter()
             .zip(dir)
@@ -109,7 +109,7 @@ fn count_trails_from_trailhead(map: &Vec<Vec<u32>>, trail_head_pos: Vec<usize>) 
 
         new_height = map[new_pos[0]][new_pos[1]];
 
-        if new_height.checked_sub(curr_height).unwrap_or(0) != 1 {
+        if new_height.saturating_sub(curr_height) != 1 {
             continue;
         }
 

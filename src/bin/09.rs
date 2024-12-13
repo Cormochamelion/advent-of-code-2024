@@ -40,11 +40,11 @@ fn compress_disk(disk_map: &mut Vec<Option<usize>>) -> u64 {
     let mut checksum: usize = 0;
 
     loop {
-        if disk_map[i] == None && j > i {
+        if disk_map[i].is_none() && j > i {
             // If we crossed i over j, we don't want to do any swaps any more.
             disk_map.swap(i, j);
 
-            while disk_map[j] == None {
+            while disk_map[j].is_none() {
                 j -= 1;
             }
         }
@@ -124,20 +124,20 @@ fn parse_input_contig(
 
     for pos_len in pos_lens {
         if is_file {
-            file_pos = i.clone();
+            file_pos = i;
             for _ in 0..pos_len {
                 disk_map[i] = Some(file_id);
                 i += 1;
             }
 
-            files.push((file_pos, pos_len.clone()));
+            files.push((file_pos, pos_len));
 
             is_file = false;
             file_id += 1;
         } else {
             match free_space.get_mut(&pos_len) {
-                Some(entry) => entry.push_back(i.clone()),
-                None => _ = free_space.insert(pos_len.clone(), VecDeque::from([i.clone()])),
+                Some(entry) => entry.push_back(i),
+                None => _ = free_space.insert(pos_len, VecDeque::from([i])),
             };
 
             i += pos_len;
@@ -155,7 +155,7 @@ fn find_space(
     space_map: &mut HashMap<usize, VecDeque<usize>>,
     max_free_space: usize,
 ) -> Option<(usize, usize)> {
-    let mut leftest = max_pos.clone();
+    let mut leftest = *max_pos;
     let mut space_tup: Option<(usize, usize)> = None;
 
     for size in *size..=max_free_space {
@@ -170,11 +170,8 @@ fn find_space(
         }
     }
 
-    match space_tup {
-        Some((size, _)) => {
-            _ = space_map.get_mut(&size).unwrap().pop_front();
-        }
-        None => {}
+    if let Some((size, _)) = space_tup {
+        _ = space_map.get_mut(&size).unwrap().pop_front();
     }
 
     space_tup
@@ -214,7 +211,7 @@ fn compress_disk_contig(
                 None => continue,
             };
 
-        i = file_pos.clone();
+        i = *file_pos;
         j = space_pos;
 
         for _ in *file_pos..(file_pos + file_len) {

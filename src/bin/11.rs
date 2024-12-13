@@ -83,7 +83,7 @@ fn transmute_stone(stone: &u64) -> Vec<u64> {
     }
 
     if stone == &0u64 {
-        return vec![1];
+        vec![1]
     } else if n_digits.rem_euclid(2) == 0 {
         let downshift = 10u64.pow(n_digits / 2);
         let left_digits = stone / downshift;
@@ -126,7 +126,7 @@ pub fn part_two(input: &str) -> Option<u64> {
         blink_compressed(&mut stones);
     }
 
-    Some(stones.iter().map(|(_, count)| count).sum())
+    Some(stones.values().sum())
 }
 
 #[cfg(test)]

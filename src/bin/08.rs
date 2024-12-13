@@ -78,7 +78,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         }
     }
 
-    Some(antinodes.iter().count() as u32)
+    Some(antinodes.len() as u32)
 }
 
 fn extend_pos_line(pos: &[usize; 2], diff: &[i32; 2], bounds: &[usize; 2]) -> Option<[usize; 2]> {
@@ -88,9 +88,9 @@ fn extend_pos_line(pos: &[usize; 2], diff: &[i32; 2], bounds: &[usize; 2]) -> Op
     ];
 
     if (new_pos[0] < bounds[0]) && (new_pos[1] < bounds[1]) {
-        return Some(new_pos);
+        Some(new_pos)
     } else {
-        return None;
+        None
     }
 }
 
@@ -98,7 +98,7 @@ fn resonant_pos_pair_antinodes(
     pos_pair: (&[usize; 2], &[usize; 2]),
     dims: &[usize; 2],
 ) -> Vec<[usize; 2]> {
-    let mut antinode_vec: Vec<[usize; 2]> = vec![pos_pair.0.clone(), pos_pair.1.clone()];
+    let mut antinode_vec: Vec<[usize; 2]> = vec![*pos_pair.0, *pos_pair.1];
 
     let diff: Vec<i32> = pos_pair
         .0
@@ -136,7 +136,7 @@ fn resonant_pos_pair_antinodes(
         }
     }
 
-    return antinode_vec;
+    antinode_vec
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
@@ -153,7 +153,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         }
     }
 
-    Some(antinodes.iter().count() as u32)
+    Some(antinodes.len() as u32)
 }
 
 #[cfg(test)]

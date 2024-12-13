@@ -21,7 +21,7 @@ fn parse_input(input: &str) -> ((usize, usize), Vec<Vec<char>>) {
         output.push(line_vec);
     }
 
-    return (init_pos, output);
+    (init_pos, output)
 }
 
 struct Guard<'a> {
@@ -55,7 +55,7 @@ impl Guard<'_> {
             self.curr_pos = new_pos;
         }
 
-        return true;
+        true
     }
 
     fn count_new_boxes(&mut self) -> u32 {
@@ -93,13 +93,13 @@ impl Guard<'_> {
             }
         }
 
-        return self.looping_boxes.len() as u32;
+        self.looping_boxes.len() as u32
     }
 
     fn new_box_loops(&mut self, potential_box_pos: (usize, usize)) -> bool {
         // Use function specific variables, the objects fields shouldn't
         // change. Seems this is some shitty design.
-        let mut curr_pos = self.curr_pos.clone();
+        let mut curr_pos = self.curr_pos;
         let mut directions_iter = self.directions_iter.clone();
         let mut known_dir_changes = self.known_dir_changes.clone();
 
@@ -133,7 +133,7 @@ impl Guard<'_> {
     }
 }
 
-fn build_guard<'a>(init_pos: (usize, usize), map: &'a Vec<Vec<char>>) -> Guard {
+fn build_guard(init_pos: (usize, usize), map: &Vec<Vec<char>>) -> Guard {
     let visited_set = [init_pos].iter().copied().collect();
     let dimensions = (map.len(), map[0].len());
     let directions = vec![(-1, 0), (0, 1), (1, 0), (0, -1)];
@@ -145,8 +145,8 @@ fn build_guard<'a>(init_pos: (usize, usize), map: &'a Vec<Vec<char>>) -> Guard {
         visited_positions: visited_set,
         known_dir_changes: HashSet::new(),
         looping_boxes: HashSet::new(),
-        map: &map,
-        dimensions: dimensions,
+        map,
+        dimensions,
         directions_iter: dir_iter,
     }
 }

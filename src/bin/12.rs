@@ -12,13 +12,13 @@ fn next_direction(dir: Direction) -> Direction {
     // Get the next straight direction counter-clockwise.
     match dir {
         // Up -> Left
-        [-1, 0] => return [0, -1],
+        [-1, 0] => [0, -1],
         // Left -> Down
-        [0, -1] => return [1, 0],
+        [0, -1] => [1, 0],
         // Down -> Right
-        [1, 0] => return [0, 1],
+        [1, 0] => [0, 1],
         // Right -> Up
-        [0, 1] => return [-1, 0],
+        [0, 1] => [-1, 0],
         _ => panic!(
             "Invalid direction: {:?}, needs to be one of {:?}.",
             dir, DIRECTIONS
@@ -30,13 +30,13 @@ fn prev_diag(dir: Direction) -> Direction {
     // Get the previous diagonal to a straight direction counter-clockwise.
     match dir {
         // Up -> Right-Up
-        [-1, 0] => return [-1, 1],
+        [-1, 0] => [-1, 1],
         // Left -> Up-Left
-        [0, -1] => return [-1, -1],
+        [0, -1] => [-1, -1],
         // Down -> Left-Down
-        [1, 0] => return [1, -1],
+        [1, 0] => [1, -1],
         // Right -> Down-Right
-        [0, 1] => return [1, 1],
+        [0, 1] => [1, 1],
         _ => panic!(
             "Invalid direction: {:?}, needs to be one of {:?}.",
             dir, DIRECTIONS
@@ -109,10 +109,10 @@ fn explore_region(
     }
 }
 
-fn map_region<'a>(
+fn map_region(
     init_pos: Position,
     garden: &Vec<Vec<char>>,
-    visited_plots: &'a mut HashSet<Position>,
+    visited_plots: &mut HashSet<Position>,
 ) -> (Vec<Position>, usize) {
     let mut region: Vec<Position> = Vec::new();
     let mut perimeter_len: usize = 0;
@@ -258,7 +258,7 @@ fn find_corner_consuming(start: Edge, edges: &mut HashSet<Edge>) -> Edge {
 
     _ = edges.take(&curr_edge);
 
-    while let Some(_) = edges.take(&next_edge) {
+    while edges.take(&next_edge).is_some() {
         curr_edge = next_edge;
         next_edge = get_next_edge(curr_edge);
     }
@@ -291,10 +291,10 @@ fn count_sides(edges: &mut HashSet<Edge>) -> usize {
     n_sides
 }
 
-fn map_region_lazy<'a>(
+fn map_region_lazy(
     init_pos: Position,
     garden: &Vec<Vec<char>>,
-    visited_plots: &'a mut HashSet<Position>,
+    visited_plots: &mut HashSet<Position>,
 ) -> (Vec<Position>, usize) {
     let mut region: Vec<Position> = Vec::new();
     let mut edges: HashSet<Edge> = HashSet::new();

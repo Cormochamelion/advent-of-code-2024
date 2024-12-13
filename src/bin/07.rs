@@ -31,7 +31,7 @@ fn parse_input(input: &str) -> Vec<(u64, Vec<u64>)> {
         ))
     }
 
-    return output;
+    output
 }
 
 fn calibration_correct(calibration: &(u64, Vec<u64>), operators: &[fn(u64, u64) -> u64]) -> bool {
@@ -44,14 +44,14 @@ fn calibration_correct(calibration: &(u64, Vec<u64>), operators: &[fn(u64, u64) 
 
         let result = values_iter
             .zip(operator_seq)
-            .fold(first_value.clone(), |acc, (val, op)| op(acc, *val));
+            .fold(*first_value, |acc, (val, op)| op(acc, *val));
 
         if result == *cal_result {
             return true;
         }
     }
 
-    return false;
+    false
 }
 
 pub fn part_one(input: &str) -> Option<u64> {

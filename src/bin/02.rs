@@ -35,7 +35,7 @@ fn is_safe(report: &str) -> bool {
         previous = current;
     }
 
-    return true;
+    true
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -53,7 +53,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 fn vec_without(vec: &Vec<u32>, i: usize) -> Vec<u32> {
     let mut new_vec = vec.clone();
     _ = new_vec.remove(i);
-    return new_vec;
+    new_vec
 }
 
 fn is_safe_dampened(report_vec: Vec<u32>, tol: u32) -> bool {
@@ -91,7 +91,7 @@ fn is_safe_dampened(report_vec: Vec<u32>, tol: u32) -> bool {
         previous = current;
     }
 
-    return true;
+    true
 }
 
 pub fn part_two(input: &str) -> Option<u32> {

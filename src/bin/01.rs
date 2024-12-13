@@ -26,7 +26,7 @@ fn input_to_sorted_pair_vec(input: &str) -> Vec<Vec<u32>> {
         vec.sort()
     }
 
-    return pair_vec;
+    pair_vec
 }
 
 pub fn part_one(input: &str) -> Option<i32> {

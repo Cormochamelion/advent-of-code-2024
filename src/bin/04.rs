@@ -14,7 +14,7 @@ impl Direction {
         let new_row = row as i32 + row_off;
         let new_col = col as i32 + col_off;
 
-        return (new_row, new_col);
+        (new_row, new_col)
     }
 }
 
@@ -48,7 +48,7 @@ fn input_to_matrix(input: &str) -> DMatrix<char> {
 
     let row_major_mat = DMatrix::from_iterator(n_chars, n_lines, input_iter);
 
-    return row_major_mat.transpose();
+    row_major_mat.transpose()
 }
 
 fn check_mat_pos(matrix: &DMatrix<char>, pos: (i32, i32)) -> bool {
@@ -61,13 +61,13 @@ fn check_mat_pos(matrix: &DMatrix<char>, pos: (i32, i32)) -> bool {
 
     let col_ok = col >= 0 && col < n_cols;
 
-    return row_ok && col_ok;
+    row_ok && col_ok
 }
 
 fn pos_to_indices(pos: (i32, i32)) -> (usize, usize) {
     let (row, col) = pos;
 
-    return (row as usize, col as usize);
+    (row as usize, col as usize)
 }
 
 fn continues_word(
@@ -91,14 +91,14 @@ fn continues_word(
         if !check_mat_pos(char_mat, new_pos) {
             return false;
         }
-        return continues_word(
+        continues_word(
             char_mat,
             pos_to_indices(new_pos),
             &word_remainder,
-            &direction,
-        );
+            direction,
+        )
     } else {
-        return false;
+        false
     }
 }
 
@@ -127,19 +127,19 @@ fn starts_n_words(char_mat: &DMatrix<char>, pos: (usize, usize), word: String) -
                         char_mat,
                         pos_to_indices(new_pos),
                         &word_remainder,
-                        &direction,
+                        direction,
                     ) {
                         n_words += 1;
                     }
                 }
-                return n_words;
+                n_words
             } else {
-                return 0;
+                0
             }
         }
         // End of the word, we found something.
         _ => {
-            return 1;
+            1
         }
     }
 }
@@ -160,14 +160,14 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 fn string_from_index_slice(matrix: &DMatrix<char>, index_slice: &[(usize, usize)]) -> String {
-    return index_slice
+    index_slice
         .iter()
         .map(|slice| matrix[*slice])
-        .collect::<String>();
+        .collect::<String>()
 }
 
 fn is_xmas_a(char_mat: &DMatrix<char>, pos: (usize, usize)) -> bool {
-    if !(char_mat[pos] == 'A') {
+    if char_mat[pos] != 'A' {
         return false;
     }
 
@@ -183,12 +183,12 @@ fn is_xmas_a(char_mat: &DMatrix<char>, pos: (usize, usize)) -> bool {
         pos_to_indices(BOTTOM_LEFT.move_from(pos)),
     ];
 
-    let all_diags_are_mas = [diag_1, diag_2]
+    
+
+    [diag_1, diag_2]
         .into_iter()
         .map(|diag| string_from_index_slice(char_mat, &diag))
-        .all(|diag_str| diag_str == "SAM" || diag_str == "MAS");
-
-    return all_diags_are_mas;
+        .all(|diag_str| diag_str == "SAM" || diag_str == "MAS")
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
