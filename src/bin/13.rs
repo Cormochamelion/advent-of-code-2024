@@ -48,7 +48,7 @@ fn parse_input(input: &str) -> Vec<ClawMachine> {
 }
 
 fn find_cheapest_inputs(machine: ClawMachine) -> u64 {
-    let precision = 10;
+    let precision = 3;
     let (buttons, prize_pos) = machine;
     let button_dirs: [[f64; 2]; 2] = buttons
         .iter()
@@ -105,8 +105,51 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(least_tokens)
 }
 
-pub fn part_two(_input: &str) -> Option<u64> {
-    None
+fn parse_input_trillion(input: &str) -> Vec<ClawMachine> {
+    let mut output = Vec::new();
+
+    let button_re = Regex::new(r"^Button ([A-Z]): X\+([0-9]+), Y\+([0-9]+)").unwrap();
+    let prize_re = Regex::new(r"^Prize: X=([0-9]+), Y=([0-9]+)").unwrap();
+
+    let mut buttons: Vec<Button> = Vec::new();
+    let mut prize_pos: PrizePos;
+    let mut button_pos: [u64; 2];
+
+    for line in input.lines() {
+        if let Some((_, [button_type, x, y])) = button_re.captures(line).map(|caps| caps.extract())
+        {
+            button_pos = [x.parse().unwrap(), y.parse().unwrap()];
+            buttons.push((button_pos, prize_for_button_type(button_type)));
+
+            continue;
+        }
+
+        if let Some((_, [x, y])) = prize_re.captures(line).map(|caps| caps.extract()) {
+            prize_pos = [x.parse().unwrap(), y.parse().unwrap()]
+                .iter()
+                .map(|x: &u64| x + 10u64.pow(13))
+                .collect::<Vec<u64>>()
+                .try_into()
+                .unwrap();
+
+            output.push((buttons.clone().try_into().unwrap(), prize_pos));
+            buttons.clear();
+        }
+    }
+
+    output
+}
+
+pub fn part_two(input: &str) -> Option<u64> {
+    let machines = parse_input_trillion(input);
+    let mut least_tokens: u64 = 0;
+
+    for machine in machines {
+        least_tokens = least_tokens
+            .checked_add(find_cheapest_inputs(machine))
+            .unwrap();
+    }
+    Some(least_tokens)
 }
 
 #[cfg(test)]
