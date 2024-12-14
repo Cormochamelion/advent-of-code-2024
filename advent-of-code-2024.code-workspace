@@ -1,0 +1,16 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "rust-analyzer.diagnostics.disabled": [
+            "unlinked-file"
+        ],
+        "rust-analyzer.rustfmt.extraArgs": [
+            "--config",
+            "max_width=80"
+        ]
+    }
+}
