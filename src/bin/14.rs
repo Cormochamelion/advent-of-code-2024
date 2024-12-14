@@ -1,5 +1,7 @@
 advent_of_code::solution!(14);
 
+use std::collections::HashSet;
+
 use itertools::izip;
 use regex::Regex;
 
@@ -51,8 +53,8 @@ fn parse_input(input: &str) -> (Vec<[usize; 2]>, Vec<[i32; 2]>, [usize; 2]) {
 }
 
 fn positions_after_n_seconds(
-    init_pos: Vec<[usize; 2]>,
-    velocities: Vec<[i32; 2]>,
+    init_pos: &[[usize; 2]],
+    velocities: &Vec<[i32; 2]>,
     dims: [usize; 2],
     n_seconds: u32,
 ) -> Vec<[usize; 2]> {
@@ -125,8 +127,8 @@ pub fn part_one(input: &str) -> Option<u32> {
     let n_seconds = 100;
     let (initial_positions, velocities, dims) = parse_input(input);
     let predicted_pos = positions_after_n_seconds(
-        initial_positions,
-        velocities,
+        &initial_positions,
+        &velocities,
         dims,
         n_seconds,
     );
@@ -136,8 +138,73 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(safety_factor)
 }
 
+fn pos_to_right(pos: &[usize; 2]) -> [usize; 2] {
+    [pos[0] + 1, pos[1] + 1]
+}
+
+fn form_christmas_tree(pos_vec: &Vec<[usize; 2]>) -> bool {
+    // As I happen to know, the Christmas tree is solid.
+    let n_contig_pos: u32 = 10;
+    let pos_set: HashSet<&[usize; 2]> = HashSet::from_iter(pos_vec.iter());
+
+    let mut curr_contig_pos: u32;
+    let mut curr_pos: [usize; 2];
+    let mut right_pos: [usize; 2];
+
+    for pos in pos_vec {
+        curr_pos = *pos;
+        right_pos = pos_to_right(&curr_pos);
+        curr_contig_pos = 0;
+
+        while pos_set.contains(&right_pos) {
+            curr_pos = right_pos;
+            right_pos = pos_to_right(&curr_pos);
+
+            curr_contig_pos += 1;
+            if curr_contig_pos >= n_contig_pos {
+                return true;
+            }
+        }
+    }
+
+    false
+}
+
+fn display_pos(pos_vec: &Vec<[usize; 2]>, dims: &[usize; 2]) {
+    let row = vec!['.'; dims[1]];
+    let mut canvas: Vec<Vec<char>> = Vec::new();
+    let [mut i, mut j]: &[usize; 2];
+
+    for _ in 0..dims[0] {
+        canvas.push(row.clone());
+    }
+
+    for pos in pos_vec {
+        [i, j] = *pos;
+        canvas[i][j] = '#';
+    }
+
+    for row in canvas {
+        println!("{:?}", row.iter().collect::<String>());
+    }
+}
+
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (initial_positions, velocities, dims) = parse_input(input);
+
+    let mut n_seconds = 0;
+    let step = 1;
+    let mut curr_pos = initial_positions;
+
+    while !form_christmas_tree(&curr_pos) {
+        curr_pos =
+            positions_after_n_seconds(&curr_pos, &velocities, dims, step);
+        n_seconds += step;
+    }
+
+    display_pos(&curr_pos, &dims);
+
+    Some(n_seconds)
 }
 
 #[cfg(test)]
